@@ -12,11 +12,11 @@ class AjaxResponse {
   }
 }
 class Info{
-  String image,title;
+  String image,title,id;
   List<Quality> audio,video,mp3;
-  Info({@required this.image,@required this.title,@required this.audio,@required this.video,@required this.mp3});
+  Info({@required this.image,@required this.title,@required this.audio,@required this.video,@required this.mp3,@required this.id});
 }
 class Quality{
-  String quality,size;
-  Quality({this.quality,this.size});
+  String quality,size,dataFtype,dataFquality;
+  Quality({this.quality,this.size,this.dataFquality,this.dataFtype});
 }
