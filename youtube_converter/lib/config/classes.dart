@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:youtube_converter/pages/InfoPage.dart';
 
 class AjaxResponse {
   String status, result;

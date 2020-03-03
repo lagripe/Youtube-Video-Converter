@@ -4,7 +4,6 @@ import 'package:youtube_converter/config/classes.dart';
 import 'dart:io';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
-import 'package:fluttertoast/fluttertoast.dart';
 
 class Manager {
   static Future<Info> fetchInfo(String link) async {
@@ -85,15 +84,9 @@ class Manager {
       return Info(
           image: image, title: title, audio: audio, mp3: mp3, video: video);
     } on SocketException {
-      Fluttertoast.showToast(
-          msg: "Can't connect to the server",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIos: 1,
-          fontSize: 16.0);
-      throw Exception("Socket Exception");
+      return Future.error("Can't connect to the server!");
     } catch (Exception) {
-      throw Exception("Unknown Exception");
+      return Future.error("Unknown error!");
     }
 
     //return _data;
