@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Manager {
   static Future<Info> fetchInfo(String link) async {
@@ -34,7 +35,7 @@ class Manager {
       String image = r.firstMatch(_data.result).group(0);
       // ---------- token --------------
       r = RegExp(r"_id: '(\w+)'");
-      String id = r.firstMatch(_data.result).group(0);
+      String id = r.firstMatch(_data.result).group(1);
       //---------------------------
       List<Quality> video = List<Quality>();
       List<Quality> mp3 = List<Quality>();
@@ -116,10 +117,13 @@ class Manager {
             ),
           );
       });
-      
-      
       return Info(
-          image: image, title: title, audio: audio, mp3: mp3, video: video,id: "");
+          image: image,
+          title: title,
+          audio: audio,
+          mp3: mp3,
+          video: video,
+          id: id);
     } on SocketException {
       return Future.error("Can't connect to the server!");
     } catch (Exception) {
@@ -129,14 +133,15 @@ class Manager {
     //return _data;
   }
 
-  void downloadVideo(String type, String quality, String id) {
+  static Future<bool> downloadVideo(
+      {String type, String quality, String id, String v_id}) async {
     Map<String, String> headers = {
       "accept": "*/*",
       "accept-encoding": "utf-8",
       //"accept-language:": "en-US,en;q=0.9",
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
       "origin": "https://www.y2mate.com",
-      "referer": "https://www.y2mate.com/youtube/$id",
+      "referer": "https://www.y2mate.com/youtube/$v_id",
       "sec-fetch-dest": "empty",
       "sec-fetch-mode": "cors",
       "sec-fetch-site": "same-site",
@@ -144,12 +149,33 @@ class Manager {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36",
     };
     Map<String, String> payload = {
-      "type":"youtube",
-      "_id":"5e1b3115d684eb2b358b458c",
-      "v_id":"",
-      "ajax":"1",
-      "ftype":"",
-      "fquality":"",
+      "type": "youtube",
+      "_id": id,
+      "v_id": v_id,
+      "ajax": "1",
+      "ftype": type,
+      "fquality": quality,
     };
+    try {
+      var response = await http.post('https://mate07.y2mate.com/en10/convert',
+          headers: headers, body: payload);
+      AjaxResponse _data = AjaxResponse.fromJson(json.decode(response.body));
+      Document doc = parser.parse(_data.result);
+      String path = doc.getElementsByTagName("a")[0].attributes['href'];
+      if (path != null) {
+        var directory = await getExternalStorageDirectories(type: StorageDirectory.music);
+        //directory.forEach((f)=> print(f));
+        //print("${directory[]}/");
+        
+        var req = Dio()
+            .download(path, "${directory[0]}/al.mp3")
+            .catchError((onError) => print("Dio Error"));
+            
+      }
+      return true;
+    } on Exception catch (E) {
+      print(E.toString());
+      return Future.error("Error while downloading");
+    }
   }
 }

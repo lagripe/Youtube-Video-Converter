@@ -75,14 +75,23 @@ class _InfoPageState extends State<InfoPage> {
                       pinned: true,
                     ),
                     getHorizontalList(
+                        id: snapshot.data.id,
+                        v_id: link.split('v=')[1],
+                        context: context,
                         title: "VIDEO",
                         icon: Icons.movie,
                         list: snapshot.data.video),
                     getHorizontalList(
+                        id: snapshot.data.id,
+                        v_id: link.split('v=')[1],
+                        context: context,
                         title: "MP3",
                         icon: Icons.audiotrack,
                         list: snapshot.data.mp3),
                     getHorizontalList(
+                        id: snapshot.data.id,
+                        v_id: link.split('v=')[1],
+                        context: context,
                         title: "AUDIO",
                         icon: Icons.audiotrack,
                         list: snapshot.data.audio)
@@ -95,7 +104,19 @@ class _InfoPageState extends State<InfoPage> {
     );
   }
 
-  Widget getHorizontalList({String title, IconData icon, List<Quality> list}) {
+  Widget getHorizontalList(
+      {BuildContext context,
+      String title,
+      IconData icon,
+      List<Quality> list,
+      String id,
+      String v_id}) {
+    var snack = SnackBar(
+      content: Text("Download started..."),
+      backgroundColor: Color(0xFFd8153f),
+      duration: Duration(seconds: 1),
+      elevation: 10,
+    );
     return SliverPadding(
       padding: EdgeInsets.all(10),
       sliver: SliverList(
@@ -130,24 +151,38 @@ class _InfoPageState extends State<InfoPage> {
                       width: 150,
                       color: Colors.white,
                       padding: EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(list[index].quality,
-                              style: TextStyle(
-                                  fontFamily: "MyriadPro",
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  decoration: TextDecoration.none)),
-                          Text(list[index].size,
-                              style: TextStyle(
-                                  fontFamily: "Roboto",
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.none)),
-                        ],
+                      child: InkWell(
+                        hoverColor: Colors.green,
+                        onTap: () {
+                          Scaffold.of(context).showSnackBar(snack);
+                          Manager.downloadVideo(
+                                  id: id,
+                                  quality: list[index].dataFquality,
+                                  type: list[index].dataFtype,
+                                  v_id: v_id)
+                              .catchError((onError) => print("Error Download"))
+                              .then((_) => print("OK"));
+                              
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(list[index].quality,
+                                style: TextStyle(
+                                    fontFamily: "MyriadPro",
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    decoration: TextDecoration.none)),
+                            Text(list[index].size,
+                                style: TextStyle(
+                                    fontFamily: "Roboto",
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.none)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
