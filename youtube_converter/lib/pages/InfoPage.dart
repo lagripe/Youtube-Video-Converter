@@ -77,6 +77,7 @@ class _InfoPageState extends State<InfoPage> {
                     getHorizontalList(
                         id: snapshot.data.id,
                         v_id: link.split('v=')[1],
+                        v_title: snapshot.data.title,
                         context: context,
                         title: "VIDEO",
                         icon: Icons.movie,
@@ -84,6 +85,7 @@ class _InfoPageState extends State<InfoPage> {
                     getHorizontalList(
                         id: snapshot.data.id,
                         v_id: link.split('v=')[1],
+                        v_title: snapshot.data.title,
                         context: context,
                         title: "MP3",
                         icon: Icons.audiotrack,
@@ -91,6 +93,7 @@ class _InfoPageState extends State<InfoPage> {
                     getHorizontalList(
                         id: snapshot.data.id,
                         v_id: link.split('v=')[1],
+                        v_title: snapshot.data.title,
                         context: context,
                         title: "AUDIO",
                         icon: Icons.audiotrack,
@@ -107,6 +110,7 @@ class _InfoPageState extends State<InfoPage> {
   Widget getHorizontalList(
       {BuildContext context,
       String title,
+      String v_title,
       IconData icon,
       List<Quality> list,
       String id,
@@ -159,10 +163,11 @@ class _InfoPageState extends State<InfoPage> {
                                   id: id,
                                   quality: list[index].dataFquality,
                                   type: list[index].dataFtype,
-                                  v_id: v_id)
-                              .catchError((onError) => print("Error Download"))
-                              .then((_) => print("OK"));
-                              
+                                  v_id: v_id,
+                                  title: v_title
+                                      .trim()
+                                      .replaceAll(RegExp(r"[^\w\s]"), ''))
+                              .catchError((onError) => print("Error Download"));
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

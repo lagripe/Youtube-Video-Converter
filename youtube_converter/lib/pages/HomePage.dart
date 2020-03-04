@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_converter/pages/DownloadedFiles.dart';
 import 'dart:core';
 
 import 'package:youtube_converter/pages/InfoPage.dart';
@@ -31,15 +32,35 @@ class _HomePageState extends State<HomePage> {
           body: SingleChildScrollView(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.only(top: 100),
+                padding: const EdgeInsets.only(top: 50),
                 child: Column(
                   children: <Widget>[
-                    SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: Image(
-                        image: AssetImage("assets/img/Logo.png"),
-                        fit: BoxFit.cover,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        InkWell(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DownloadedFilesPage())),
+                            child: Icon(
+                              Icons.file_download,
+                              size: 35,
+                              color: Colors.white,
+                            )),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 60.0),
+                      child: SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: Image(
+                          image: AssetImage("assets/img/Logo.png"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     Padding(
@@ -87,7 +108,8 @@ class _HomePageState extends State<HomePage> {
             height: 100,
             child: FloatingActionButton(
               onPressed: () {
-                _controller.text = "https://www.youtube.com/watch?v=VKbNq8t297A";
+                _controller.text =
+                    "https://www.youtube.com/watch?v=VKbNq8t297A";
                 RegExp regex = RegExp(
                     r"^https://www.youtube.com/watch\?v=[a-zA-Z0-9][a-zA-Z0-9\-_]+[a-zA-Z0-9]$",
                     caseSensitive: true,
@@ -97,8 +119,12 @@ class _HomePageState extends State<HomePage> {
                   _controller.text = "";
                 } else {
                   setState(() => errorText = "");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => InfoPage(link: _controller.text,)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InfoPage(
+                                link: _controller.text,
+                              )));
                 }
               },
               elevation: 8,
@@ -111,6 +137,4 @@ class _HomePageState extends State<HomePage> {
           ),
         ));
   }
-
-  
 }

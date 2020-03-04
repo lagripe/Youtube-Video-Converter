@@ -134,7 +134,11 @@ class Manager {
   }
 
   static Future<bool> downloadVideo(
-      {String type, String quality, String id, String v_id}) async {
+      {String type,
+      String quality,
+      String id,
+      String v_id,
+      String title}) async {
     Map<String, String> headers = {
       "accept": "*/*",
       "accept-encoding": "utf-8",
@@ -163,14 +167,10 @@ class Manager {
       Document doc = parser.parse(_data.result);
       String path = doc.getElementsByTagName("a")[0].attributes['href'];
       if (path != null) {
-        var directory = await getExternalStorageDirectories(type: StorageDirectory.music);
-        //directory.forEach((f)=> print(f));
-        //print("${directory[]}/");
-        
-        var req = Dio()
-            .download(path, "${directory[0]}/al.mp3")
+        var directory = await getExternalStorageDirectory();
+        Dio()
+            .download(path, "${directory.path}/$title.$type")
             .catchError((onError) => print("Dio Error"));
-            
       }
       return true;
     } on Exception catch (E) {
