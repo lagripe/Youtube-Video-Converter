@@ -10,8 +10,8 @@ class DownloadedFilesPage extends StatefulWidget {
 class _DownloadedFilesPageState extends State<DownloadedFilesPage> {
   Future _listofFiles() async {
     var directory = (await getExternalStorageDirectory()).path;
+
     return io.Directory("$directory/").listSync();
-    //io.Directory("$directory/").listSync()[0].;
   }
 
   @override
@@ -25,14 +25,18 @@ class _DownloadedFilesPageState extends State<DownloadedFilesPage> {
         body: FutureBuilder(
             future: _listofFiles(),
             builder: (context, snapshot) {
-              if (snapshot.hasData)
+              if (snapshot.hasData) {
                 return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                  return Card(
-                    child: Text(snapshot.data[index].toString()),
-                  );
-                });
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(snapshot.data[index].path.toString()),
+                        ),
+                      );
+                    });
+              }
             }));
   }
 }
